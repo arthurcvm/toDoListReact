@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import GerenciadorTarefas from './GerenciadorTarefas';
 
-test('renders learn react link', () => {
-  render(<App />);
+test('Deve redenrizar o projeto sem erros', () => {
+  render(<GerenciadorTarefas />);
   const linkElement = screen.getByText(/learn react/i);
   expect(linkElement).toBeInTheDocument();
 });
