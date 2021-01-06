@@ -24,7 +24,7 @@ describe("Teste do componente de conclusão de tarefas", () => {
 
   it("Deve exibir a modal", () => {
     const { getByTestId } = render(
-      <ConcluirTarefa tarefa={tarefa} recarregarTarefas={() => false} />
+      <ConcluirTarefa tarefa={tarefa} recarregarTarefas={() => false}  className={''}/>
     );
     fireEvent.click(getByTestId("btn-abrir-modal"));
     expect(getByTestId("modal")).toHaveTextContent(nomeTarefa);
