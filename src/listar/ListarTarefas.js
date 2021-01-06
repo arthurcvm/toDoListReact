@@ -4,23 +4,35 @@ import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ItensListaTarefas from "./ItensListaTarefas";
+import Paginacao from "./Paginacao";
 
 function ListarTarefas() {
+  const ITENS_POR_PAG = 3;
+
   const [tarefas, setTarefas] = useState([]);
   const [carregarTarefas, setCarregarTarefas] = useState(true);
+  const [totalItens, setTotalItens] = useState(0);
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   useEffect(() => {
     function obterTarefas() {
       const tarefasDb = localStorage["tarefas"];
-      let listarTarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
-      setTarefas(listarTarefas);
-      console.log(listarTarefas);
+      let listaTarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
+      setTotalItens(listaTarefas.length);
+      setTarefas(
+        listaTarefas.splice((paginaAtual - 1) * ITENS_POR_PAG, ITENS_POR_PAG)
+      );
     }
     if (carregarTarefas) {
       obterTarefas();
       setCarregarTarefas(false);
     }
-  }, [carregarTarefas]);
+  }, [carregarTarefas, paginaAtual]);
+
+  function handleMudarPagina(pagina){
+    setPaginaAtual(pagina);
+    setCarregarTarefas(true);
+  }
 
   return (
     <div className="text-center">
@@ -48,6 +60,12 @@ function ListarTarefas() {
           />
         </tbody>
       </Table>
+      <Paginacao
+        totalItens={totalItens}
+        itensPorPagina={ITENS_POR_PAG}
+        paginaAtual={paginaAtual}
+        mudarPagina={handleMudarPagina}
+      />
     </div>
   );
 }
