@@ -1,59 +1,55 @@
-import React, { useState, useEffect } from "react";
-import { A } from "hookrouter";
-import { Table, Form } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useState } from "react";
 import ItensListaTarefas from "./ItensListaTarefas";
-import Paginacao from "./Paginacao";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { A } from "hookrouter";
+import { Form, Table } from "react-bootstrap";
 import Ordenacao from "./Ordenacao";
+import Paginacao from "./Paginacao";
 
 function ListarTarefas() {
   const ITENS_POR_PAG = 3;
 
   const [tarefas, setTarefas] = useState([]);
-  const [carregarTarefas, setCarregarTarefas] = useState(true);
   const [totalItens, setTotalItens] = useState(0);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [ordenarAsc, setOrdenarAsc] = useState(false);
   const [ordenarDesc, setOrdenarDesc] = useState(false);
   const [filtroTarefa, setFiltroTarefa] = useState("");
 
+  function obterTarefas() {
+    const tarefasDb = localStorage["tarefas"];
+    let listaTarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
+
+    //Filtrar
+    listaTarefas = listaTarefas.filter(
+      (t) => t.nome.toLowerCase().indexOf(filtroTarefa.toLowerCase()) === 0
+    );
+
+    //Ordenar
+    if (ordenarAsc) {
+      listaTarefas.sort((t1, t2) =>
+        t1.nome.toLowerCase() > t2.nome.toLowerCase() ? 1 : -1
+      );
+    } else if (ordenarDesc) {
+      listaTarefas.sort((t1, t2) =>
+        t1.nome.toLowerCase() < t2.nome.toLowerCase() ? 1 : -1
+      );
+    }
+
+    //Paginar
+    setTotalItens(listaTarefas.length);
+    setTarefas(
+      listaTarefas.splice((paginaAtual - 1) * ITENS_POR_PAG, ITENS_POR_PAG)
+    );
+  }
+
   useEffect(() => {
-    function obterTarefas() {
-      const tarefasDb = localStorage["tarefas"];
-      let listaTarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
-
-      //Filtrar
-      listaTarefas = listaTarefas.filter(
-        (t) => t.nome.toLowerCase().indexOf(filtroTarefa.toLowerCase()) === 0
-      );
-
-      //Ordenar
-      if (ordenarAsc) {
-        listaTarefas.sort((t1, t2) =>
-          t1.nome.toLowerCase() > t2.nome.toLowerCase() ? 1 : -1
-        );
-      } else if (ordenarDesc) {
-        listaTarefas.sort((t1, t2) =>
-          t1.nome.toLowerCase() < t2.nome.toLowerCase() ? 1 : -1
-        );
-      }
-
-      //Paginar
-      setTotalItens(listaTarefas.length);
-      setTarefas(
-        listaTarefas.splice((paginaAtual - 1) * ITENS_POR_PAG, ITENS_POR_PAG)
-      );
-    }
-    if (carregarTarefas) {
-      obterTarefas();
-      setCarregarTarefas(false);
-    }
-  }, [carregarTarefas, paginaAtual, ordenarAsc, ordenarDesc, filtroTarefa]);
+    obterTarefas();
+  }, [paginaAtual, ordenarAsc, ordenarDesc, filtroTarefa]);
 
   function handleMudarPagina(pagina) {
     setPaginaAtual(pagina);
-    setCarregarTarefas(true);
   }
 
   function handleOrdenar(event) {
@@ -68,12 +64,10 @@ function ListarTarefas() {
       setOrdenarAsc(false);
       setOrdenarDesc(false);
     }
-    setCarregarTarefas(true);
   }
 
   function handleFiltrar(event) {
     setFiltroTarefa(event.target.value);
-    setCarregarTarefas(true);
   }
 
   return (
@@ -115,7 +109,7 @@ function ListarTarefas() {
         <tbody>
           <ItensListaTarefas
             tarefas={tarefas}
-            recarregarTarefas={setCarregarTarefas}
+            recarregarTarefas={obterTarefas}
           />
         </tbody>
       </Table>

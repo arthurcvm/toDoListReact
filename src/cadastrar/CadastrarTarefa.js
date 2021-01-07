@@ -22,10 +22,6 @@ function CadastrarTarefa() {
     }
   }
 
-  function handleTxtTarefa(event) {
-    setTarefa(event.target.value);
-  }
-
   function handleFecharModal() {
     navigate("/");
   }
@@ -44,7 +40,7 @@ function CadastrarTarefa() {
               maxLength="100"
               required
               value={tarefa}
-              onChange={handleTxtTarefa}
+              onChange={(e) => setTarefa(e.target.value)}
               data-testid="txt-tarefa"
             />
             <Form.Control.Feedback type="invalid">

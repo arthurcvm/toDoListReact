@@ -7,18 +7,14 @@ function AtualizarTarefa(props) {
   const [exibirModal, setExibirModal] = useState(false);
   const [formValidado, setFormValidado] = useState(false);
   const [tarefa, setTarefa] = useState("");
-  const [carregarTarefa, setCarregarTarefa] = useState(true);
 
   useEffect(() => {
-    if (carregarTarefa) {
       const tarefasDb = localStorage["tarefas"];
       const tarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
       const tarefa = tarefas.filter((t) => t.id === parseInt(props.id))[0];
       setTarefa(tarefa.nome);
-
-      setCarregarTarefa(false);
-    }
-  }, [carregarTarefa, props]);
+      
+  }, [props]);
 
   function voltar(event) {
     event.preventDefault();
@@ -48,10 +44,6 @@ function AtualizarTarefa(props) {
     }
   }
 
-  function handleTxtTarefa(event) {
-    setTarefa(event.target.value);
-  }
-
   return (
     <div>
       <h3 className="text-center">Atualizar</h3>
@@ -67,7 +59,7 @@ function AtualizarTarefa(props) {
               required
               data-testid="txt-tarefa"
               value={tarefa}
-              onChange={handleTxtTarefa}
+              onChange={(e) => setTarefa(e.target.value)}
             />
             <Form.Control.Feedback type="invalid">
               A tarefa deve conter ao menos 5 caracteres
@@ -104,7 +96,7 @@ function AtualizarTarefa(props) {
 }
 
 AtualizarTarefa.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 export default AtualizarTarefa;
