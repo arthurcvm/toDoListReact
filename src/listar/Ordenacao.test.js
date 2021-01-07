@@ -1,0 +1,41 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import Ordenacao from "./Ordenacao";
+import { render } from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
+import { faTruckMonster } from "@fortawesome/free-solid-svg-icons";
+
+describe("Teste do componente de ordenação", () => {
+  it("Deve renderizar o componente sem erros", () => {
+    const div = document.createElement("div");
+    ReactDOM.render(<Ordenacao ordenarAsc={false} ordenarDesc={false} />, div);
+    ReactDOM.unmountComponentAtNode(div);
+  });
+
+  it("Deve exibir a ordenação padrão", () => {
+    const { getByTestId } = render(
+      <Ordenacao ordenarAsc={false} ordenarDesc={false} />
+    );
+    expect(getByTestId("faSort")).not.toHaveClass("hidden");
+    expect(getByTestId("faSortUp")).toHaveClass("hidden");
+    expect(getByTestId("faSortDown")).toHaveClass("hidden");
+  });
+
+  it("Deve exibir a ordenação ascendente", () => {
+    const { getByTestId } = render(
+      <Ordenacao ordenarAsc={true} ordenarDesc={false} />
+    );
+    expect(getByTestId("faSort")).toHaveClass("hidden");
+    expect(getByTestId("faSortUp")).not.toHaveClass("hidden");
+    expect(getByTestId("faSortDown")).toHaveClass("hidden");
+  });
+
+  it("Deve exibir a ordenação descendente", () => {
+    const { getByTestId } = render(
+      <Ordenacao ordenarAsc={false} ordenarDesc={true} />
+    );
+    expect(getByTestId("faSort")).toHaveClass("hidden");
+    expect(getByTestId("faSortUp")).toHaveClass("hidden");
+    expect(getByTestId("faSortDown")).not.toHaveClass("hidden");
+  });
+});
