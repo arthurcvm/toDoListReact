@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ItensListaTarefas from "./ItensListaTarefas";
 import Paginacao from "./Paginacao";
+import Ordenacao from "./Ordenacao";
 
 function ListarTarefas() {
   const ITENS_POR_PAG = 3;
@@ -13,11 +14,26 @@ function ListarTarefas() {
   const [carregarTarefas, setCarregarTarefas] = useState(true);
   const [totalItens, setTotalItens] = useState(0);
   const [paginaAtual, setPaginaAtual] = useState(1);
+  const [ordenarAsc, setOrdenarAsc] = useState(false);
+  const [ordenarDesc, setOrdenarDesc] = useState(false);
 
   useEffect(() => {
     function obterTarefas() {
       const tarefasDb = localStorage["tarefas"];
       let listaTarefas = tarefasDb ? JSON.parse(tarefasDb) : [];
+
+      //Ordenar
+      if (ordenarAsc) {
+        listaTarefas.sort((t1, t2) =>
+          t1.nome.toLowerCase() > t2.nome.toLowerCase() ? 1 : -1
+        );
+      } else if (ordenarDesc) {
+        listaTarefas.sort((t1, t2) =>
+          t1.nome.toLowerCase() < t2.nome.toLowerCase() ? 1 : -1
+        );
+      }
+
+      //Paginar
       setTotalItens(listaTarefas.length);
       setTarefas(
         listaTarefas.splice((paginaAtual - 1) * ITENS_POR_PAG, ITENS_POR_PAG)
@@ -27,10 +43,25 @@ function ListarTarefas() {
       obterTarefas();
       setCarregarTarefas(false);
     }
-  }, [carregarTarefas, paginaAtual]);
+  }, [carregarTarefas, paginaAtual, ordenarAsc, ordenarDesc]);
 
-  function handleMudarPagina(pagina){
+  function handleMudarPagina(pagina) {
     setPaginaAtual(pagina);
+    setCarregarTarefas(true);
+  }
+
+  function handleOrdenar(event) {
+    event.preventDefault();
+    if (!ordenarAsc && !ordenarDesc) {
+      setOrdenarAsc(true);
+      setOrdenarDesc(false);
+    } else if (ordenarAsc) {
+      setOrdenarAsc(false);
+      setOrdenarDesc(true);
+    } else {
+      setOrdenarAsc(false);
+      setOrdenarDesc(false);
+    }
     setCarregarTarefas(true);
   }
 
@@ -40,7 +71,12 @@ function ListarTarefas() {
       <Table striped bordered hover responsive data-testid="tabela">
         <thead>
           <tr>
-            <th>Tarefa</th>
+            <th>
+              <a href="/" onClick={handleOrdenar}>
+                Tarefa &nbsp;
+                <Ordenacao ordenarAsc={ordenarAsc} ordenarDesc={ordenarDesc} />
+              </a>
+            </th>
             <th>
               <A
                 href="/cadastrar"
