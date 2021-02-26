@@ -5,7 +5,7 @@ import Tarefa from "../models/Tarefa.model";
 import { render, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 
-describe("Teste do componente de remoção de tarefas", () => {
+describe.skip("Teste do componente de remoção de tarefas", () => {
   const nomeTarefa = "Tarefa de teste";
   const tarefa = new Tarefa(1, nomeTarefa, false);
 
