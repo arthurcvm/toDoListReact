@@ -5,7 +5,7 @@ import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { faTruckMonster } from "@fortawesome/free-solid-svg-icons";
 
-describe.skip("Teste do componente de ordenação", () => {
+describe("Teste do componente de ordenação", () => {
   it("Deve renderizar o componente sem erros", () => {
     const div = document.createElement("div");
     ReactDOM.render(<Ordenacao ordenarAsc={false} ordenarDesc={false} />, div);
